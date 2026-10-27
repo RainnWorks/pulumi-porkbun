@@ -68,10 +68,8 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-      - uses: actions/setup-node@v7
+      - uses: oven-sh/setup-bun@v2
         if: matrix.language == 'nodejs'
-        with:
-          node-version: 22
       - uses: actions/setup-python@v7
         if: matrix.language == 'python'
         with:
@@ -82,7 +80,7 @@ jobs:
           dotnet-version: 8.0.x
       - name: Build Node.js SDK
         if: matrix.language == 'nodejs'
-        run: cd sdk/nodejs && npm install --no-audit --no-fund && npm run build
+        run: cd sdk/nodejs && bun install && bun run --bun build
       - name: Build Python SDK
         if: matrix.language == 'python'
         run: cd sdk/python && python -m pip install -q build && python -m build .
@@ -102,12 +100,13 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
+      - uses: oven-sh/setup-bun@v2
       - name: Type-check the TypeScript example against the local SDK
         run: |
-          cd sdk/nodejs && npm install --no-audit --no-fund && npm run build && cp package.json bin/
-          cd ../../examples/nodejs && npm install --no-audit --no-fund ../../sdk/nodejs/bin && npx tsc --noEmit
+          cd sdk/nodejs && bun install && bun run --bun build && cp package.json bin/
+          cd ../../examples/nodejs
+          # Point the example at this commit's SDK instead of the published one.
+          bun -e 'const f = "package.json"; const p = await Bun.file(f).json(); p.dependencies["@rainnworks/porkbun"] = "file:../../sdk/nodejs/bin"; await Bun.write(f, JSON.stringify(p, null, 2));'
+          bun install && bun run --bun tsc --noEmit
       - name: Compile the Go example against the local SDK
         run: cd examples/go && go mod edit -replace github.com/RainnWorks/pulumi-porkbun/sdk=../../sdk && go mod tidy && go build ./...

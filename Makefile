@@ -57,12 +57,12 @@ sdk/go: schema
 	$(PULUMI) package gen-sdk --language go $(SCHEMA_FILE) --version "$(SDK_VERSION)"
 	cd sdk && go mod tidy
 
-## build_sdks: compile the generated SDKs (needs node, python3, dotnet)
+## build_sdks: compile the generated SDKs (needs bun, python3, dotnet)
 .PHONY: build_sdks build_nodejs build_python build_dotnet build_go
 build_sdks: build_nodejs build_python build_dotnet build_go
 
 build_nodejs: sdk/nodejs
-	cd sdk/nodejs && npm install --no-audit --no-fund && npm run build
+	cd sdk/nodejs && bun install && bun run --bun build
 	cp README.md LICENSE sdk/nodejs/package.json sdk/nodejs/bin/
 
 build_python: sdk/python

@@ -17,3 +17,4 @@ sdk/dotnet/version.txt
 .idea/
 .vscode/
 .DS_Store
+sdk/nodejs/bun.lock

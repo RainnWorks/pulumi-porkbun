@@ -20,7 +20,7 @@ Never edit generated files by hand. Change the provider and run `make codegen`.
 
 - Go (the version in `go.mod`)
 - The [Pulumi CLI](https://www.pulumi.com/docs/install/)
-- To build the SDKs: Node.js, Python 3 and the .NET 8 SDK
+- To build the SDKs: [Bun](https://bun.sh), Python 3 and the .NET 8 SDK
 
 ## Making a change
 

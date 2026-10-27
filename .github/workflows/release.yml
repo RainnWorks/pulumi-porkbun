@@ -93,13 +93,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      # Built with Bun; published with npm, because only npm signs provenance.
       - uses: actions/setup-node@v7
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
       - name: Build
         run: |
-          cd sdk/nodejs && npm install --no-audit --no-fund && npm run build
+          cd sdk/nodejs && bun install && bun run --bun build
           cp ../../README.md ../../LICENSE package.json bin/
       - name: Publish
         env:
