@@ -85,10 +85,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Tag sdk/v${{ needs.verify.outputs.version }}
+        with:
+          fetch-depth: 0
+      # The Go SDK is the module in sdk/, versioned by the tag sdk/vX.Y.Z, which is
+      # pushed with vX.Y.Z (see CONTRIBUTING.md). The workflow's own token can't
+      # push it: GitHub refuses a tag from GITHUB_TOKEN on a commit whose workflow
+      # files differ from main's. So this job only checks it.
+      - name: sdk/${{ github.ref_name }} is on this commit
         run: |
-          git tag "sdk/${GITHUB_REF_NAME}" "$GITHUB_SHA"
-          git push origin "sdk/${GITHUB_REF_NAME}"
+          sha=$(git rev-parse -q --verify "refs/tags/sdk/${GITHUB_REF_NAME}^{commit}" || true)
+          if [ "$sha" != "$GITHUB_SHA" ]; then
+            echo "::error::push the tag sdk/${GITHUB_REF_NAME} on $GITHUB_SHA alongside ${GITHUB_REF_NAME}"
+            exit 1
+          fi
 
   nodejs:
     name: npm

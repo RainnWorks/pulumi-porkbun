@@ -61,11 +61,12 @@ cd examples/yaml && pulumi preview
 2. Move the `[Unreleased]` notes in `CHANGELOG.md` under a new `## [X.Y.Z]`
    heading. They become the GitHub release notes.
 3. Commit, open a PR, merge.
-4. Tag the merge commit `vX.Y.Z` and push the tag.
+4. Tag the merge commit twice, `vX.Y.Z` and `sdk/vX.Y.Z` (the Go SDK's module
+   version), and push both: `git push origin vX.Y.Z sdk/vX.Y.Z`.
 
 The `release` workflow then checks that the tag matches `.version`, publishes
-the provider plugin to GitHub Releases, tags the Go SDK `sdk/vX.Y.Z`, and
-publishes to npm, PyPI and NuGet.
+the provider plugin to GitHub Releases, checks the Go SDK tag, and publishes
+to npm, PyPI and NuGet.
 
 ### Registry credentials (maintainers)
 
@@ -74,7 +75,7 @@ publishes to npm, PyPI and NuGet.
 | npm | [Trusted publishing](https://docs.npmjs.com/trusted-publishers): on the package's settings, a GitHub Actions publisher for this repo and `release.yml`. Then repository variable `NPM_ENABLED=true`. npm only allows this on an existing package, so the very first release used a short-lived `NPM_TOKEN` secret instead, deleted afterwards | Skipped |
 | PyPI | A [trusted publisher](https://docs.pypi.org/trusted-publishers/) for `rainnworks-porkbun`: this repo, workflow `release.yml`, environment `pypi`. Then repository variable `PYPI_ENABLED=true` | Skipped |
 | NuGet | [Trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing): a policy on nuget.org for this repo and `release.yml`. Then repository variables `NUGET_USER` (the nuget.org account) and `NUGET_ENABLED=true` | Skipped |
-| Go | Nothing: the workflow pushes the `sdk/vX.Y.Z` tag | |
+| Go | Nothing: the `sdk/vX.Y.Z` tag is the release | |
 
 ## Code of conduct
 

@@ -80,7 +80,7 @@ release:
 	@echo "$(SDK_VERSION)" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$$' || (echo "VERSION must be X.Y.Z" && exit 1)
 	echo "$(SDK_VERSION)" > .version
 	$(MAKE) codegen VERSION=$(SDK_VERSION)
-	@echo "Now: update CHANGELOG.md, commit, and tag v$(SDK_VERSION)."
+	@echo "Now: update CHANGELOG.md, commit, then: git tag v$(SDK_VERSION) && git tag sdk/v$(SDK_VERSION) && git push origin v$(SDK_VERSION) sdk/v$(SDK_VERSION)"
 
 ## test: unit tests against an in-memory Porkbun
 .PHONY: test
