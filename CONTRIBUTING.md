@@ -72,7 +72,7 @@ to npm, PyPI and NuGet.
 
 | Registry | Set up | Until then |
 |---|---|---|
-| npm | [Trusted publishing](https://docs.npmjs.com/trusted-publishers): on the package's settings, a GitHub Actions publisher for this repo and `release.yml`. Then repository variable `NPM_ENABLED=true`. npm only allows this on an existing package, so the very first release used a short-lived `NPM_TOKEN` secret instead, deleted afterwards | Skipped |
+| npm | [Trusted publishing](https://docs.npmjs.com/trusted-publishers): on the package's settings, a GitHub Actions publisher for this repo and `release.yml`. Then repository variable `NPM_ENABLED=true`. (npm only allows it on an existing package; 0.1.1 was published by hand to create it) | Skipped |
 | PyPI | A [trusted publisher](https://docs.pypi.org/trusted-publishers/) for `rainnworks-porkbun`: this repo, workflow `release.yml`, environment `pypi`. Then repository variable `PYPI_ENABLED=true` | Skipped |
 | NuGet | [Trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing): a policy on nuget.org for this repo and `release.yml`. Then repository variables `NUGET_USER` (the nuget.org account) and `NUGET_ENABLED=true` | Skipped |
 | Go | Nothing: the `sdk/vX.Y.Z` tag is the release | |

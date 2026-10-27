@@ -1,6 +1,6 @@
 {
     "name": "@rainnworks/porkbun",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "A Pulumi provider for Porkbun: DNS records and domain nameservers.",
     "keywords": [
         "porkbun",
@@ -26,7 +26,7 @@
     "pulumi": {
         "resource": true,
         "name": "porkbun",
-        "version": "0.1.1",
+        "version": "0.1.2",
         "server": "github://api.github.com/RainnWorks/pulumi-porkbun"
     }
 }

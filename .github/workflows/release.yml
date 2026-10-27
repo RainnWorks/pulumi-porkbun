@@ -102,10 +102,8 @@ jobs:
   nodejs:
     name: npm
     needs: [verify, provider]
-    # Turn on with repository variable NPM_ENABLED=true. Publishes by npm trusted
-    # publishing (OIDC, no token) once the package has a trusted publisher; until
-    # then, with the NPM_TOKEN secret. npm only allows a trusted publisher on a
-    # package that already exists, so the first release needs the token.
+    # npm trusted publishing (OIDC): no token. The package's trusted publisher is
+    # this repo and release.yml. Turn on with repository variable NPM_ENABLED=true.
     if: vars.NPM_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -126,8 +124,6 @@ jobs:
           cd sdk/nodejs && bun install && bun run --bun build
           cp ../../README.md ../../LICENSE package.json bin/
       - name: Publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: cd sdk/nodejs/bin && npm publish --access public --provenance
 
   python:

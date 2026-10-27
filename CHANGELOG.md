@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-27
+
+The first release on NuGet. No change to the provider.
+
+### Changed
+
+- Every registry now publishes by trusted publishing (OIDC): npm, PyPI and
+  NuGet. No registry tokens are stored.
+- The Go SDK tag `sdk/vX.Y.Z` is pushed with the release tag; the release
+  workflow checks it.
+
 ## [0.1.1] - 2026-10-27
 
 The first release published to npm, PyPI and NuGet. No change to the provider.
@@ -32,6 +43,7 @@ First release.
   and server errors.
 - SDKs for Node.js, Python, Go and .NET.
 
-[Unreleased]: https://github.com/RainnWorks/pulumi-porkbun/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/RainnWorks/pulumi-porkbun/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/RainnWorks/pulumi-porkbun/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/RainnWorks/pulumi-porkbun/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/RainnWorks/pulumi-porkbun/releases/tag/v0.1.0

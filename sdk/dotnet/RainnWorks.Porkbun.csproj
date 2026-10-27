@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/RainnWorks/pulumi-porkbun</PackageProjectUrl>
     <RepositoryUrl>https://github.com/RainnWorks/pulumi-porkbun</RepositoryUrl>
     <PackageIcon>logo.png</PackageIcon>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
 
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
