@@ -42,6 +42,7 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
+          cache-dependency-path: "**/go.sum"
       - name: Install Pulumi
         run: |
           curl -fsSL https://get.pulumi.com | sh -s -- --version "$PULUMI_VERSION"
@@ -61,6 +62,7 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
+          cache-dependency-path: "**/go.sum"
       - name: Release notes from CHANGELOG.md
         run: |
           awk -v v="${{ needs.verify.outputs.version }}" '
