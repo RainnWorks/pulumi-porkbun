@@ -73,7 +73,7 @@ publishes to npm, PyPI and NuGet.
 |---|---|---|
 | npm | [Trusted publishing](https://docs.npmjs.com/trusted-publishers): on the package's settings, a GitHub Actions publisher for this repo and `release.yml`. Then repository variable `NPM_ENABLED=true`. npm only allows this on an existing package, so the very first release used a short-lived `NPM_TOKEN` secret instead, deleted afterwards | Skipped |
 | PyPI | A [trusted publisher](https://docs.pypi.org/trusted-publishers/) for `rainnworks-porkbun`: this repo, workflow `release.yml`, environment `pypi`. Then repository variable `PYPI_ENABLED=true` | Skipped |
-| NuGet | Repository secret `NUGET_API_KEY`, scoped to push `RainnWorks.Porkbun` | Skipped with a warning |
+| NuGet | Repository secret `NUGET_API_KEY`, scoped to push `RainnWorks.Porkbun`. Then repository variable `NUGET_ENABLED=true` | Skipped |
 | Go | Nothing: the workflow pushes the `sdk/vX.Y.Z` tag | |
 
 ## Code of conduct

@@ -89,7 +89,10 @@ jobs:
         run: cd sdk/python && python -m pip install -q build && python -m build .
       - name: Build .NET SDK
         if: matrix.language == 'dotnet'
-        run: cd sdk/dotnet && cat ../../.version > version.txt && dotnet build
+        # Release build, as the release workflow does: it must produce the .nupkg.
+        run: |
+          cd sdk/dotnet && cat ../../.version > version.txt && dotnet build -c Release
+          find . -name '*.nupkg' | grep . || (echo "no .nupkg produced" && exit 1)
       - name: Build Go SDK
         if: matrix.language == 'go'
         run: cd sdk && go build ./...

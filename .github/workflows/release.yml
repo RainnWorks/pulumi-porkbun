@@ -7,8 +7,9 @@ name: release
 #   - rainnworks-porkbun to PyPI (trusted publishing, no token)
 #   - RainnWorks.Porkbun to NuGet
 #   - the Go SDK, as the tag sdk/vX.Y.Z
-# Each registry is skipped, not failed, until it is set up: repository variables
-# NPM_ENABLED and PYPI_ENABLED, and the NUGET_API_KEY secret.
+# Each registry is skipped until it is switched on with a repository variable:
+# NPM_ENABLED, PYPI_ENABLED, NUGET_ENABLED. Variables are read when the run
+# starts, so set them before pushing the tag.
 
 on:
   push:
@@ -142,20 +143,24 @@ jobs:
   dotnet:
     name: nuget
     needs: [verify, provider]
+    # Turn on with repository variable NUGET_ENABLED=true, once NUGET_API_KEY is set.
+    if: vars.NUGET_ENABLED == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 8.0.x
-      - name: Pack
+      - name: Build the package
+        # The generated project packs itself on build (GeneratePackageOnBuild);
+        # a separate `dotnet pack` then fails with NU5026. Collect what the build made.
         run: |
           cd sdk/dotnet
           echo "${{ needs.verify.outputs.version }}" > version.txt
-          dotnet pack -c Release -o ../../nuget
+          dotnet build -c Release
+          mkdir -p ../../nuget && find . -name '*.nupkg' -exec cp {} ../../nuget/ \;
+          ls -la ../../nuget
       - name: Publish
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: |
-          if [ -z "$NUGET_API_KEY" ]; then echo "::warning::NUGET_API_KEY not set; skipping NuGet"; exit 0; fi
-          dotnet nuget push nuget/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push nuget/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate

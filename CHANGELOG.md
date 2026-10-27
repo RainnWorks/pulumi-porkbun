@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-27
+
+The first release published to npm, PyPI and NuGet. No change to the provider.
+
+### Fixed
+
+- Release pipeline: the npm, PyPI and NuGet jobs. v0.1.0 reached GitHub Releases
+  and the Go module proxy only.
+
 ## [0.1.0] - 2026-10-27
 
 First release.
@@ -23,5 +32,6 @@ First release.
   and server errors.
 - SDKs for Node.js, Python, Go and .NET.
 
-[Unreleased]: https://github.com/RainnWorks/pulumi-porkbun/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/RainnWorks/pulumi-porkbun/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/RainnWorks/pulumi-porkbun/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/RainnWorks/pulumi-porkbun/releases/tag/v0.1.0
