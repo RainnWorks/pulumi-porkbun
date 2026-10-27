@@ -143,9 +143,14 @@ jobs:
   dotnet:
     name: nuget
     needs: [verify, provider]
-    # Turn on with repository variable NUGET_ENABLED=true, once NUGET_API_KEY is set.
+    # NuGet trusted publishing: no stored key. Needs a trusted publishing policy
+    # on nuget.org for this repo and release.yml, and repository variables
+    # NUGET_USER (the nuget.org account) and NUGET_ENABLED=true.
     if: vars.NUGET_ENABLED == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v6
@@ -160,7 +165,12 @@ jobs:
           dotnet build -c Release
           mkdir -p ../../nuget && find . -name '*.nupkg' -exec cp {} ../../nuget/ \;
           ls -la ../../nuget
+      - name: Log in to NuGet (OIDC)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
       - name: Publish
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: dotnet nuget push nuget/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
