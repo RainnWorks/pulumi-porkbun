@@ -1,0 +1,38 @@
+# Builds the provider plugin for every platform and attaches it to the GitHub
+# release. Pulumi downloads it from there: pluginDownloadURL is
+# github://api.github.com/RainnWorks/pulumi-porkbun, which expects archives named
+# pulumi-resource-porkbun-v<version>-<os>-<arch>.tar.gz with the binary at the root.
+version: 2
+project_name: pulumi-porkbun
+
+builds:
+  - id: provider
+    main: ./provider/cmd/pulumi-resource-porkbun
+    binary: pulumi-resource-porkbun
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X github.com/RainnWorks/pulumi-porkbun/provider.Version={{ .Version }}
+
+archives:
+  - id: provider
+    formats: [tar.gz]
+    name_template: "{{ .Binary }}-{{ .Tag }}-{{ .Os }}-{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-dev"
+
+changelog:
+  disable: true
+
+release:
+  # Release notes come from CHANGELOG.md, written by hand.
+  mode: keep-existing

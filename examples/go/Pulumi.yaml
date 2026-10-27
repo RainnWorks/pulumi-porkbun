@@ -1,0 +1,7 @@
+name: porkbun-example-go
+runtime: go
+description: Manage DNS records on a Porkbun domain.
+config:
+  domain:
+    type: string
+    description: A domain in your Porkbun account, with API access turned on.

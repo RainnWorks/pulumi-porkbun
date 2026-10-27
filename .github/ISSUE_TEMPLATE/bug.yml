@@ -1,0 +1,22 @@
+name: Bug report
+description: Something the provider does wrong
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what happened instead. Include the error text.
+    validations:
+      required: true
+  - type: textarea
+    id: program
+    attributes:
+      label: Program
+      description: The smallest program that shows the problem. Leave out your API keys.
+      render: text
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Output of `pulumi about`, or the provider and SDK versions and your language.

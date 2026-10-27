@@ -1,0 +1,389 @@
+{
+  "name": "porkbun",
+  "displayName": "Porkbun",
+  "description": "A Pulumi provider for Porkbun: DNS records and domain nameservers.",
+  "keywords": [
+    "porkbun",
+    "dns",
+    "domain",
+    "nameservers",
+    "category/network",
+    "kind/native"
+  ],
+  "homepage": "https://github.com/RainnWorks/pulumi-porkbun",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/RainnWorks/pulumi-porkbun",
+  "pluginDownloadURL": "github://api.github.com/RainnWorks/pulumi-porkbun",
+  "publisher": "RainnWorks",
+  "namespace": "rainnworks",
+  "language": {
+    "csharp": {
+      "respectSchemaVersion": true,
+      "rootNamespace": "RainnWorks"
+    },
+    "go": {
+      "generateResourceContainerTypes": true,
+      "importBasePath": "github.com/RainnWorks/pulumi-porkbun/sdk/go/porkbun",
+      "respectSchemaVersion": true
+    },
+    "nodejs": {
+      "packageDescription": "A Pulumi provider for Porkbun: DNS records and domain nameservers.",
+      "packageName": "@rainnworks/porkbun",
+      "respectSchemaVersion": true
+    },
+    "python": {
+      "packageName": "rainnworks_porkbun",
+      "pyproject": {
+        "enabled": true
+      },
+      "respectSchemaVersion": true
+    }
+  },
+  "config": {
+    "variables": {
+      "apiKey": {
+        "type": "string",
+        "description": "Porkbun API key (`pk1_…`). Can also be set with the `PORKBUN_API_KEY` environment variable.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_API_KEY"
+          ]
+        },
+        "secret": true
+      },
+      "baseUrl": {
+        "type": "string",
+        "description": "Override the Porkbun API endpoint. Defaults to `https://api.porkbun.com/api/json/v3`; only useful for testing.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_BASE_URL"
+          ]
+        }
+      },
+      "secretApiKey": {
+        "type": "string",
+        "description": "Porkbun secret API key (`sk1_…`). Can also be set with the `PORKBUN_SECRET_API_KEY` environment variable.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_SECRET_API_KEY"
+          ]
+        },
+        "secret": true
+      }
+    }
+  },
+  "types": {
+    "porkbun:index:DnsRecordInfo": {
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "The record's value."
+        },
+        "fqdn": {
+          "type": "string",
+          "description": "The fully qualified name."
+        },
+        "name": {
+          "type": "string",
+          "description": "The subdomain, empty for the apex."
+        },
+        "notes": {
+          "type": "string",
+          "description": "The note stored with the record, if any."
+        },
+        "prio": {
+          "type": "integer",
+          "description": "Priority; 0 for types that have none."
+        },
+        "recordId": {
+          "type": "string",
+          "description": "Porkbun's ID for the record. Import it as `<domain>/<recordId>`."
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Time to live in seconds."
+        },
+        "type": {
+          "type": "string",
+          "description": "The record type."
+        }
+      },
+      "type": "object",
+      "required": [
+        "recordId",
+        "name",
+        "fqdn",
+        "type",
+        "content",
+        "ttl",
+        "prio",
+        "notes"
+      ]
+    }
+  },
+  "provider": {
+    "properties": {
+      "apiKey": {
+        "type": "string",
+        "description": "Porkbun API key (`pk1_…`). Can also be set with the `PORKBUN_API_KEY` environment variable.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_API_KEY"
+          ]
+        },
+        "secret": true
+      },
+      "baseUrl": {
+        "type": "string",
+        "description": "Override the Porkbun API endpoint. Defaults to `https://api.porkbun.com/api/json/v3`; only useful for testing.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_BASE_URL"
+          ]
+        }
+      },
+      "secretApiKey": {
+        "type": "string",
+        "description": "Porkbun secret API key (`sk1_…`). Can also be set with the `PORKBUN_SECRET_API_KEY` environment variable.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_SECRET_API_KEY"
+          ]
+        },
+        "secret": true
+      }
+    },
+    "inputProperties": {
+      "apiKey": {
+        "type": "string",
+        "description": "Porkbun API key (`pk1_…`). Can also be set with the `PORKBUN_API_KEY` environment variable.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_API_KEY"
+          ]
+        },
+        "secret": true
+      },
+      "baseUrl": {
+        "type": "string",
+        "description": "Override the Porkbun API endpoint. Defaults to `https://api.porkbun.com/api/json/v3`; only useful for testing.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_BASE_URL"
+          ]
+        }
+      },
+      "secretApiKey": {
+        "type": "string",
+        "description": "Porkbun secret API key (`sk1_…`). Can also be set with the `PORKBUN_SECRET_API_KEY` environment variable.",
+        "defaultInfo": {
+          "environment": [
+            "PORKBUN_SECRET_API_KEY"
+          ]
+        },
+        "secret": true
+      }
+    }
+  },
+  "resources": {
+    "porkbun:index:DnsRecord": {
+      "description": "Manages a DNS record on a domain registered with Porkbun.\n\nThe domain must use Porkbun's own nameservers for the record to resolve. Porkbun\nstill stores a record when the domain is delegated elsewhere, and reports that as\na warning, which this provider passes on.\n\n{{% examples %}}\n## Example Usage\n{{% example %}}\n### An A record and a mail exchanger\n\n```typescript\nimport * as porkbun from \"@rainnworks/porkbun\";\n\nconst www = new porkbun.DnsRecord(\"www\", {\n    domain: \"example.com\",\n    name: \"www\",\n    type: \"A\",\n    content: \"203.0.113.10\",\n});\n\nconst mx = new porkbun.DnsRecord(\"mx\", {\n    domain: \"example.com\",\n    type: \"MX\",\n    content: \"mail.example.com\",\n    prio: 10,\n});\n```\n```python\nimport rainnworks_porkbun as porkbun\n\nwww = porkbun.DnsRecord(\"www\",\n    domain=\"example.com\",\n    name=\"www\",\n    type=\"A\",\n    content=\"203.0.113.10\")\n\nmx = porkbun.DnsRecord(\"mx\",\n    domain=\"example.com\",\n    type=\"MX\",\n    content=\"mail.example.com\",\n    prio=10)\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RainnWorks/pulumi-porkbun/sdk/go/porkbun\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := porkbun.NewDnsRecord(ctx, \"www\", &porkbun.DnsRecordArgs{\n\t\t\tDomain:  pulumi.String(\"example.com\"),\n\t\t\tName:    pulumi.String(\"www\"),\n\t\t\tType:    pulumi.String(\"A\"),\n\t\t\tContent: pulumi.String(\"203.0.113.10\"),\n\t\t})\n\t\tif err != nil {\n\t\t\treturn err\n\t\t}\n\t\t_, err = porkbun.NewDnsRecord(ctx, \"mx\", &porkbun.DnsRecordArgs{\n\t\t\tDomain:  pulumi.String(\"example.com\"),\n\t\t\tType:    pulumi.String(\"MX\"),\n\t\t\tContent: pulumi.String(\"mail.example.com\"),\n\t\t\tPrio:    pulumi.Int(10),\n\t\t})\n\t\treturn err\n\t})\n}\n```\n```csharp\nusing Pulumi;\nusing RainnWorks.Porkbun;\n\nreturn await Deployment.RunAsync(() =>\n{\n    var www = new DnsRecord(\"www\", new()\n    {\n        Domain = \"example.com\",\n        Name = \"www\",\n        Type = \"A\",\n        Content = \"203.0.113.10\",\n    });\n\n    var mx = new DnsRecord(\"mx\", new()\n    {\n        Domain = \"example.com\",\n        Type = \"MX\",\n        Content = \"mail.example.com\",\n        Prio = 10,\n    });\n});\n```\n```yaml\nresources:\n  www:\n    type: porkbun:DnsRecord\n    properties:\n      domain: example.com\n      name: www\n      type: A\n      content: 203.0.113.10\n  mx:\n    type: porkbun:DnsRecord\n    properties:\n      domain: example.com\n      type: MX\n      content: mail.example.com\n      prio: 10\n```\n{{% /example %}}\n{{% /examples %}}\n\n## Import\n\nImport an existing record with its domain and Porkbun record ID. List the IDs with\nthe `getDnsRecords` function, or from the Porkbun API.\n\n```sh\n$ pulumi import porkbun:index:DnsRecord www example.com/123456789\n```\n",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "The record's value. For `TXT`, give the text without surrounding quotes."
+        },
+        "domain": {
+          "type": "string",
+          "description": "The domain the record belongs to, e.g. `example.com`. Changing it replaces the record.",
+          "replaceOnChanges": true
+        },
+        "fqdn": {
+          "type": "string",
+          "description": "The record's fully qualified name, e.g. `www.example.com`."
+        },
+        "name": {
+          "type": "string",
+          "description": "The subdomain, without the domain: `www`, `*` for a wildcard, or empty (the default) for the apex."
+        },
+        "notes": {
+          "type": "string",
+          "description": "A note stored with the record in Porkbun. It is not published in DNS."
+        },
+        "prio": {
+          "type": "integer",
+          "description": "Priority, for `MX` and `SRV` records."
+        },
+        "recordId": {
+          "type": "string",
+          "description": "Porkbun's ID for the record."
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Time to live in seconds. Porkbun's minimum is 600, which is also the default.",
+          "default": 600
+        },
+        "type": {
+          "type": "string",
+          "description": "The record type: `A`, `AAAA`, `CNAME`, `ALIAS`, `MX`, `TXT`, `NS`, `SRV`, `TLSA`, `CAA`, `HTTPS` or `SVCB`."
+        }
+      },
+      "required": [
+        "domain",
+        "type",
+        "content",
+        "ttl",
+        "recordId",
+        "fqdn"
+      ],
+      "inputProperties": {
+        "content": {
+          "type": "string",
+          "description": "The record's value. For `TXT`, give the text without surrounding quotes."
+        },
+        "domain": {
+          "type": "string",
+          "description": "The domain the record belongs to, e.g. `example.com`. Changing it replaces the record.",
+          "replaceOnChanges": true
+        },
+        "name": {
+          "type": "string",
+          "description": "The subdomain, without the domain: `www`, `*` for a wildcard, or empty (the default) for the apex."
+        },
+        "notes": {
+          "type": "string",
+          "description": "A note stored with the record in Porkbun. It is not published in DNS."
+        },
+        "prio": {
+          "type": "integer",
+          "description": "Priority, for `MX` and `SRV` records."
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Time to live in seconds. Porkbun's minimum is 600, which is also the default.",
+          "default": 600
+        },
+        "type": {
+          "type": "string",
+          "description": "The record type: `A`, `AAAA`, `CNAME`, `ALIAS`, `MX`, `TXT`, `NS`, `SRV`, `TLSA`, `CAA`, `HTTPS` or `SVCB`."
+        }
+      },
+      "requiredInputs": [
+        "domain",
+        "type",
+        "content"
+      ]
+    },
+    "porkbun:index:DomainNameservers": {
+      "description": "Manages the nameservers a Porkbun-registered domain is delegated to.\n\nUse it to move a domain's DNS to another provider, such as Cloudflare, while\nkeeping Porkbun as the registrar. A domain always has nameservers, so creating\nthis resource takes over the current set rather than adding to it.\n\n**Deleting this resource does not change the nameservers.** Reverting a domain's\ndelegation would take it offline, so removing the resource only stops Pulumi\nmanaging it. To go back to Porkbun's own DNS, set Porkbun's nameservers\nexplicitly before removing it.\n\n{{% examples %}}\n## Example Usage\n{{% example %}}\n### Delegate a domain to Cloudflare\n\n```typescript\nimport * as cloudflare from \"@pulumi/cloudflare\";\nimport * as porkbun from \"@rainnworks/porkbun\";\n\nconst zone = new cloudflare.Zone(\"example\", {\n    account: { id: \"<account-id>\" },\n    name: \"example.com\",\n});\n\nnew porkbun.DomainNameservers(\"example\", {\n    domain: \"example.com\",\n    nameservers: zone.nameServers,\n});\n```\n```python\nimport pulumi_cloudflare as cloudflare\nimport rainnworks_porkbun as porkbun\n\nzone = cloudflare.Zone(\"example\",\n    account={\"id\": \"<account-id>\"},\n    name=\"example.com\")\n\nporkbun.DomainNameservers(\"example\",\n    domain=\"example.com\",\n    nameservers=zone.name_servers)\n```\n```go\npackage main\n\nimport (\n\t\"github.com/RainnWorks/pulumi-porkbun/sdk/go/porkbun\"\n\t\"github.com/pulumi/pulumi/sdk/v3/go/pulumi\"\n)\n\nfunc main() {\n\tpulumi.Run(func(ctx *pulumi.Context) error {\n\t\t_, err := porkbun.NewDomainNameservers(ctx, \"example\", &porkbun.DomainNameserversArgs{\n\t\t\tDomain: pulumi.String(\"example.com\"),\n\t\t\tNameservers: pulumi.StringArray{\n\t\t\t\tpulumi.String(\"ada.ns.cloudflare.com\"),\n\t\t\t\tpulumi.String(\"bob.ns.cloudflare.com\"),\n\t\t\t},\n\t\t})\n\t\treturn err\n\t})\n}\n```\n```csharp\nusing Pulumi;\nusing RainnWorks.Porkbun;\n\nreturn await Deployment.RunAsync(() =>\n{\n    var ns = new DomainNameservers(\"example\", new()\n    {\n        Domain = \"example.com\",\n        Nameservers = new[] { \"ada.ns.cloudflare.com\", \"bob.ns.cloudflare.com\" },\n    });\n});\n```\n```yaml\nresources:\n  example:\n    type: porkbun:DomainNameservers\n    properties:\n      domain: example.com\n      nameservers:\n        - ada.ns.cloudflare.com\n        - bob.ns.cloudflare.com\n```\n{{% /example %}}\n{{% /examples %}}\n\n## Import\n\nImport with the domain name. Importing changes nothing; it only records the\ncurrent nameservers.\n\n```sh\n$ pulumi import porkbun:index:DomainNameservers example example.com\n```\n",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "The domain, e.g. `example.com`. It must be registered with Porkbun. Changing it replaces the resource.",
+          "replaceOnChanges": true
+        },
+        "nameservers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The nameservers to delegate the domain to, e.g. the two Cloudflare assigns a zone. Order does not matter."
+        }
+      },
+      "required": [
+        "domain",
+        "nameservers"
+      ],
+      "inputProperties": {
+        "domain": {
+          "type": "string",
+          "description": "The domain, e.g. `example.com`. It must be registered with Porkbun. Changing it replaces the resource.",
+          "replaceOnChanges": true
+        },
+        "nameservers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The nameservers to delegate the domain to, e.g. the two Cloudflare assigns a zone. Order does not matter."
+        }
+      },
+      "requiredInputs": [
+        "domain",
+        "nameservers"
+      ]
+    }
+  },
+  "functions": {
+    "porkbun:index:getDnsRecords": {
+      "description": "Lists every editable DNS record on a Porkbun domain. Porkbun's default NS and SOA records are not included. Useful for finding record IDs to import.",
+      "inputs": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "The domain, e.g. `example.com`."
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain"
+        ]
+      },
+      "outputs": {
+        "properties": {
+          "domain": {
+            "description": "The domain that was queried.",
+            "type": "string"
+          },
+          "records": {
+            "description": "The domain's records.",
+            "items": {
+              "$ref": "#/types/porkbun:index:DnsRecordInfo"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "domain",
+          "records"
+        ],
+        "type": "object"
+      }
+    },
+    "porkbun:index:getNameservers": {
+      "description": "Returns the nameservers a Porkbun-registered domain is delegated to.",
+      "inputs": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "The domain, e.g. `example.com`."
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain"
+        ]
+      },
+      "outputs": {
+        "properties": {
+          "domain": {
+            "description": "The domain that was queried.",
+            "type": "string"
+          },
+          "nameservers": {
+            "description": "The domain's nameservers, as the registry has them.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "domain",
+          "nameservers"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "resource": true,
+  "name": "porkbun",
+  "version": "0.1.0",
+  "server": "github://api.github.com/RainnWorks/pulumi-porkbun"
+}

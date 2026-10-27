@@ -1,0 +1,113 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PULUMI_VERSION: 3.272.0
+  # gen-sdk needs no backend; keep the CLI from reaching for Pulumi Cloud.
+  PULUMI_BACKEND_URL: file://${{ github.workspace }}/.pulumi
+  PULUMI_SKIP_UPDATE_CHECK: "1"
+
+jobs:
+  provider:
+    name: provider
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Format
+        run: test -z "$(gofmt -l provider)" || (gofmt -l provider && exit 1)
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: make test
+      - name: Build
+        run: make provider
+      - uses: actions/upload-artifact@v7
+        with:
+          name: provider
+          path: bin/pulumi-resource-porkbun
+          retention-days: 7
+
+  codegen:
+    name: generated code is current
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Install Pulumi
+        run: |
+          curl -fsSL https://get.pulumi.com | sh -s -- --version "$PULUMI_VERSION"
+          echo "$HOME/.pulumi/bin" >> "$GITHUB_PATH"
+      - name: Regenerate schema and SDKs
+        # The committed SDKs carry the version of the last release.
+        run: make codegen VERSION="$(cat .version)"
+      - run: make check_clean
+
+  sdks:
+    name: sdk (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    needs: codegen
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [nodejs, python, dotnet, go]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v7
+        if: matrix.language == 'nodejs'
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v7
+        if: matrix.language == 'python'
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-dotnet@v6
+        if: matrix.language == 'dotnet'
+        with:
+          dotnet-version: 8.0.x
+      - name: Build Node.js SDK
+        if: matrix.language == 'nodejs'
+        run: cd sdk/nodejs && npm install --no-audit --no-fund && npm run build
+      - name: Build Python SDK
+        if: matrix.language == 'python'
+        run: cd sdk/python && python -m pip install -q build && python -m build .
+      - name: Build .NET SDK
+        if: matrix.language == 'dotnet'
+        run: cd sdk/dotnet && cat ../../.version > version.txt && dotnet build
+      - name: Build Go SDK
+        if: matrix.language == 'go'
+        run: cd sdk && go build ./...
+
+  examples:
+    name: examples
+    runs-on: ubuntu-latest
+    needs: provider
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Type-check the TypeScript example against the local SDK
+        run: |
+          cd sdk/nodejs && npm install --no-audit --no-fund && npm run build && cp package.json bin/
+          cd ../../examples/nodejs && npm install --no-audit --no-fund ../../sdk/nodejs/bin && npx tsc --noEmit
+      - name: Compile the Go example against the local SDK
+        run: cd examples/go && go mod edit -replace github.com/RainnWorks/pulumi-porkbun/sdk=../../sdk && go mod tidy && go build ./...
